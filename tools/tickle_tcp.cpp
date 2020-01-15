@@ -301,7 +301,7 @@ namespace application
 
     // Splits the referenced address_and_port string into a separate address string and port string
     //
-    // The port is expected to be the part of the string following the last occurence of the separator character ":".
+    // The port is expected to be the part of the string following the last occurrence of the separator character ":".
     //
     // @throws std::bad_alloc, AnnotatedException
     void split_address_and_port(const std::string& address_and_port, std::string& address, std::string& port)
@@ -318,7 +318,7 @@ namespace application
         }
     }
 
-    // Splits the referenced strings into an address and network interface part
+    // Splits the referenced string into an address and network interface part
     //
     // This applies to the string representation of link-local IPv6 addresses.
     // The format is: address%interface.
