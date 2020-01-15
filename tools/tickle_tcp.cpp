@@ -41,52 +41,6 @@ int main(int argc, char* argv[])
 
 namespace application
 {
-    // @throws std::bad_alloc
-    AnnotatedException::AnnotatedException(const int error_nr, const char* const error_msg):
-        exc_error_nr(error_nr),
-        exc_error_msg(error_msg)
-    {
-    }
-
-    // @throws std::bad_alloc
-    AnnotatedException::AnnotatedException(const int error_nr, const std::string& error_msg):
-        exc_error_nr(error_nr),
-        exc_error_msg(error_msg)
-    {
-    }
-
-    AnnotatedException::~AnnotatedException() noexcept
-    {
-    }
-
-    const char* AnnotatedException::what() const noexcept
-    {
-        return exc_error_msg.c_str();
-    }
-
-    int AnnotatedException::get_error_nr() const noexcept
-    {
-        return exc_error_nr;
-    }
-
-    AutoClose::AutoClose(const int file_dsc)
-    {
-        ac_file_dsc = file_dsc;
-    }
-
-    AutoClose::~AutoClose() noexcept
-    {
-        if (ac_file_dsc != -1)
-        {
-            int rc;
-            do
-            {
-                rc = close(ac_file_dsc);
-            }
-            while (rc != 0 && errno == EINTR);
-        }
-    }
-
     // Processes requests read from standard input
     //
     // @throws std::bad_alloc, AnnotatedException
@@ -820,5 +774,51 @@ namespace application
             result += (idx & 0x1) == 0 ? static_cast<uint16_t> (data[idx]) << 8 : static_cast<uint16_t> (data[idx]);
         }
         return result;
+    }
+
+    // @throws std::bad_alloc
+    AnnotatedException::AnnotatedException(const int error_nr, const char* const error_msg):
+        exc_error_nr(error_nr),
+        exc_error_msg(error_msg)
+    {
+    }
+
+    // @throws std::bad_alloc
+    AnnotatedException::AnnotatedException(const int error_nr, const std::string& error_msg):
+        exc_error_nr(error_nr),
+        exc_error_msg(error_msg)
+    {
+    }
+
+    AnnotatedException::~AnnotatedException() noexcept
+    {
+    }
+
+    const char* AnnotatedException::what() const noexcept
+    {
+        return exc_error_msg.c_str();
+    }
+
+    int AnnotatedException::get_error_nr() const noexcept
+    {
+        return exc_error_nr;
+    }
+
+    AutoClose::AutoClose(const int file_dsc)
+    {
+        ac_file_dsc = file_dsc;
+    }
+
+    AutoClose::~AutoClose() noexcept
+    {
+        if (ac_file_dsc != -1)
+        {
+            int rc;
+            do
+            {
+                rc = close(ac_file_dsc);
+            }
+            while (rc != 0 && errno == EINTR);
+        }
     }
 }
