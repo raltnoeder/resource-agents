@@ -1,3 +1,25 @@
+/**
+ * "Tickle-ACK" TCP connection failover support utility
+ *
+ * Author: Robert Altnoeder
+ * Derived from prior work authored by Jiaju Zhang, Andrew Tridgell, Ronnie Sahlberg
+ * and the Samba project.
+ *
+ * This file is part of tickle_tcp.
+ *
+ * tickle_tcp is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * tickle_tcp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with tickle_tcp.  If not, see <https://www.gnu.org/licenses/>
+ */
 #ifndef TICKLE_TCP_H
 #define TICKLE_TCP_H
 
@@ -138,7 +160,11 @@ const char *const OPT_HELP          = "-h";
 const char *const LONG_OPT_HELP     = "--help";
 
 int run(uint16_t packet_count);
-
+void display_help(void);
+void display_error(error_info *error);
+void display_error_nr_msg(int error_nr);
+void clear_error(error_info *error);
+bool parse_arguments(int argc, char *argv[], uint16_t *packet_count);
 bool parse_endpoints(
     const char                                  *line_buffer,
     size_t                                      line_length,
@@ -160,11 +186,10 @@ bool split_address_and_netif(
     char        *netif,
     error_info  *error
 );
-void trim_left(char *buffer, size_t length);
-void trim_right(char *buffer, size_t length);
+void trim_lead(char *buffer, size_t length);
+void trim_trail(char *buffer, size_t length);
 size_t find_whitespace(const char *buffer, size_t length);
 size_t find_last_char(const char *buffer, size_t length, char value);
-bool parse_arguments(int argc, char *argv[], uint16_t *packet_count);
 bool parse_uint16(const char *input, size_t input_length, uint16_t *value, error_info *error);
 bool parse_port_number(
     const char *const   input,
@@ -190,12 +215,6 @@ bool parse_ipv6(
     struct sockaddr_in6 *address,
     error_info          *error
 );
-void display_help(void);
-void display_error(error_info *error);
-void display_error_nr_msg(int error_nr);
-void clear_error(error_info *error);
-bool check_inet_pton_rc(int rc, int error_nr, error_info *error);
-bool set_fcntl_flags(int file_dsc, int flags, error_info *error);
 bool send_ipv4_packet(
     const struct sockaddr_in *src_address,
     const struct sockaddr_in *dst_address,
@@ -218,6 +237,8 @@ bool send_packet(
     uint16_t                        packet_count,
     error_info                      *error
 );
+bool check_inet_pton_rc(int rc, int error_nr, error_info *error);
+bool set_fcntl_flags(int file_dsc, int flags, error_info *error);
 void close_file_dsc(int file_dsc);
 uint16_t ipv4_tcp_checksum(
     const unsigned char         *data,
